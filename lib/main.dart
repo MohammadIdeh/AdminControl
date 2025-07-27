@@ -18,7 +18,6 @@ class TOTPAdminApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
         useMaterial3: true,
-        fontFamily: 'Inter',
       ),
       home: const UnifiedLoginScreen(),
       debugShowCheckedModeBanner: false,

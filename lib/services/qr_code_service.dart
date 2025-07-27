@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class QRCodeService {
   static Future<String> generateQRCode(String email) async {
     // Simulate QR code generation
@@ -9,7 +11,7 @@ class QRCodeService {
         "secret=$secret&issuer=${Uri.encodeComponent('TOTP Admin Panel')}";
 
     // Simulate sending email
-    print("QR Code sent to $email: $qrData");
+    debugPrint("QR Code sent to $email: $qrData");
 
     return qrData;
   }
