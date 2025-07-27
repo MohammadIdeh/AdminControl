@@ -1,6 +1,6 @@
-import 'package:admin_totp_panel/widgets/generalWidgets/font.dart';
-import 'package:admin_totp_panel/widgets/generalWidgets/nav_Bar.dart';
 import 'package:flutter/material.dart';
+import '../widgets/generalWidgets/font.dart';
+import '../widgets/generalWidgets/nav_bar.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

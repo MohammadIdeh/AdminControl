@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'registrationScreens/main_login_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'widgets/generalWidgets/splash_screen.dart';
 
 void main() {
   runApp(const TOTPAdminApp());
@@ -12,7 +13,7 @@ class TOTPAdminApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TOTP Admin Panel',
+      title: 'M3lm Admin Panel',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF1976D2),
@@ -22,7 +23,8 @@ class TOTPAdminApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const UnifiedLoginScreen(),
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => const UnifiedLoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
       },
       debugShowCheckedModeBanner: false,

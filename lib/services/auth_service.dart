@@ -1,15 +1,15 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   static const String _masterKey = "ADMIN2025SECURE1234567890";
   static final Map<String, int> _failedAttempts = {};
   static final Map<String, DateTime> _lockoutTimes = {};
   static final List<String> _validTOTPCodes = ["123456", "789012", "456789"];
-  
-  // Keys for SharedPreferences
-  static const String _isLoggedInKey = 'is_logged_in';
-  static const String _loginTimeKey = 'login_time';
-  static const String _userTypeKey = 'user_type'; // 'totp' or 'admin'
+
+  // Temporary in-memory storage for web compatibility
+  static bool _isLoggedIn = false;
+  static DateTime? _loginTime;
+  static String? _userType;
 
   static bool isLockedOut(String identifier) {
     final lockoutTime = _lockoutTimes[identifier];
@@ -61,32 +61,33 @@ class AuthService {
     return _failedAttempts[identifier] ?? 0;
   }
 
-  // Save login state to SharedPreferences
+  // Save login state to memory (temporary solution)
   static Future<void> _saveLoginState(String userType) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_isLoggedInKey, true);
-    await prefs.setString(_loginTimeKey, DateTime.now().toIso8601String());
-    await prefs.setString(_userTypeKey, userType);
+    _isLoggedIn = true;
+    _loginTime = DateTime.now();
+    _userType = userType;
+
+    if (kDebugMode) {
+      print('✅ Login state saved: $userType at $_loginTime');
+    }
   }
 
   // Check if user is logged in
   static Future<bool> isLoggedIn() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
-    
-    if (!isLoggedIn) return false;
+    if (!_isLoggedIn || _loginTime == null) {
+      return false;
+    }
 
-    // Check if login is still valid (optional: add expiration logic)
-    final loginTimeString = prefs.getString(_loginTimeKey);
-    if (loginTimeString == null) return false;
-
-    final loginTime = DateTime.parse(loginTimeString);
     final now = DateTime.now();
-    
+
     // Optional: Auto-logout after 24 hours
-    if (now.difference(loginTime).inHours >= 24) {
+    if (now.difference(_loginTime!).inHours >= 24) {
       await logout();
       return false;
+    }
+
+    if (kDebugMode) {
+      print('✅ User is logged in as $_userType since $_loginTime');
     }
 
     return true;
@@ -94,16 +95,18 @@ class AuthService {
 
   // Get user type
   static Future<String?> getUserType() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_userTypeKey);
+    return _userType;
   }
 
   // Logout - clear all stored data
   static Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_isLoggedInKey);
-    await prefs.remove(_loginTimeKey);
-    await prefs.remove(_userTypeKey);
+    _isLoggedIn = false;
+    _loginTime = null;
+    _userType = null;
+
+    if (kDebugMode) {
+      print('🚪 User logged out - session cleared');
+    }
   }
 
   // Check authentication status and get appropriate route

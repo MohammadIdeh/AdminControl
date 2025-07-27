@@ -1,8 +1,8 @@
-import 'package:admin_totp_panel/registrationScreens/main_login_screen.dart';
-import 'package:admin_totp_panel/screens/dashboard_screen.dart';
-import 'package:admin_totp_panel/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import '../generalWidgets/font.dart';
+import '../../registrationScreens/main_login_screen.dart';
+import '../../screens/dashboard_screen.dart';
+import '../../services/auth_service.dart';
+import 'font.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
               // App Title
               Text(
-                'TOTP Admin Panel',
+                'M3lm Admin Panel',
                 style: AppFonts.heading1.copyWith(
                   color: Colors.white,
                   fontSize: 28,

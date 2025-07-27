@@ -1,9 +1,9 @@
-import 'package:admin_totp_panel/widgets/generalWidgets/font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/auth_service.dart';
 import '../services/qr_code_service.dart';
 import '../screens/dashboard_screen.dart';
+import '../widgets/generalWidgets/font.dart';
 
 enum LoginState { main, admin, emailInput }
 
@@ -188,10 +188,11 @@ class _MainLoginWidgetState extends State<MainLoginWidget> {
     final isValid = await AuthService.validateTOTP(_totpCode);
     if (isValid) {
       if (mounted) {
-        // Navigate to dashboard
-        Navigator.pushReplacement(
+        // Navigate to dashboard using named route
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          '/dashboard',
+          (route) => false,
         );
       }
     } else {
@@ -221,16 +222,12 @@ class _MainLoginWidgetState extends State<MainLoginWidget> {
           const SizedBox(height: 24),
           Text(
             'TOTP Authentication',
-            style: AppFonts.heading2.copyWith(
-              color: const Color(0xFF1976D2),
-            ),
+            style: AppFonts.heading2.copyWith(color: const Color(0xFF1976D2)),
           ),
           const SizedBox(height: 8),
           Text(
             'Enter your 6-digit authentication code',
-            style: AppFonts.bodyMedium.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: AppFonts.bodyMedium.copyWith(color: Colors.grey[600]),
           ),
           const SizedBox(height: 32),
           Row(
@@ -285,9 +282,7 @@ class _MainLoginWidgetState extends State<MainLoginWidget> {
                   Expanded(
                     child: Text(
                       _errorMessage!,
-                      style: AppFonts.caption.copyWith(
-                        color: Colors.red[700],
-                      ),
+                      style: AppFonts.caption.copyWith(color: Colors.red[700]),
                     ),
                   ),
                 ],
@@ -437,25 +432,19 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
           const SizedBox(height: 24),
           Text(
             'Admin Access',
-            style: AppFonts.heading2.copyWith(
-              color: const Color(0xFF1976D2),
-            ),
+            style: AppFonts.heading2.copyWith(color: const Color(0xFF1976D2)),
           ),
           const SizedBox(height: 8),
           Text(
             'Enter the 25-character master key',
-            style: AppFonts.bodyMedium.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: AppFonts.bodyMedium.copyWith(color: Colors.grey[600]),
           ),
           const SizedBox(height: 32),
           TextField(
             controller: _controller,
             obscureText: _isObscured,
             maxLength: 25,
-            style: AppFonts.bodyMedium.copyWith(
-              fontFamily: 'monospace',
-            ),
+            style: AppFonts.bodyMedium.copyWith(fontFamily: 'monospace'),
             decoration: InputDecoration(
               labelText: 'Master Key',
               border: OutlineInputBorder(
@@ -493,9 +482,7 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
                   Expanded(
                     child: Text(
                       _errorMessage!,
-                      style: AppFonts.caption.copyWith(
-                        color: Colors.red[700],
-                      ),
+                      style: AppFonts.caption.copyWith(color: Colors.red[700]),
                     ),
                   ),
                 ],
@@ -634,16 +621,12 @@ class _EmailInputWidgetState extends State<EmailInputWidget> {
             const SizedBox(height: 24),
             Text(
               'Generate QR Code',
-              style: AppFonts.heading2.copyWith(
-                color: const Color(0xFF1976D2),
-              ),
+              style: AppFonts.heading2.copyWith(color: const Color(0xFF1976D2)),
             ),
             const SizedBox(height: 8),
             Text(
               'Enter user email to send setup QR code',
-              style: AppFonts.bodyMedium.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: AppFonts.bodyMedium.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
