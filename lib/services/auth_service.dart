@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static const String _masterKey = "ADMIN2025SECURE1234567890";
@@ -6,10 +7,10 @@ class AuthService {
   static final Map<String, DateTime> _lockoutTimes = {};
   static final List<String> _validTOTPCodes = ["123456", "789012", "456789"];
 
-  // Temporary in-memory storage for web compatibility
-  static bool _isLoggedIn = false;
-  static DateTime? _loginTime;
-  static String? _userType;
+  // Keys for SharedPreferences
+  static const String _isLoggedInKey = 'is_logged_in';
+  static const String _loginTimeKey = 'login_time';
+  static const String _userTypeKey = 'user_type';
 
   static bool isLockedOut(String identifier) {
     final lockoutTime = _lockoutTimes[identifier];
@@ -61,51 +62,88 @@ class AuthService {
     return _failedAttempts[identifier] ?? 0;
   }
 
-  // Save login state to memory (temporary solution)
+  // Save login state to persistent storage
   static Future<void> _saveLoginState(String userType) async {
-    _isLoggedIn = true;
-    _loginTime = DateTime.now();
-    _userType = userType;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final loginTime = DateTime.now();
 
-    if (kDebugMode) {
-      print('✅ Login state saved: $userType at $_loginTime');
+      await prefs.setBool(_isLoggedInKey, true);
+      await prefs.setString(_loginTimeKey, loginTime.toIso8601String());
+      await prefs.setString(_userTypeKey, userType);
+
+      if (kDebugMode) {
+        print('✅ Login state saved: $userType at $loginTime');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error saving login state: $e');
+      }
     }
   }
 
   // Check if user is logged in
   static Future<bool> isLoggedIn() async {
-    if (!_isLoggedIn || _loginTime == null) {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
+      final loginTimeString = prefs.getString(_loginTimeKey);
+
+      if (!isLoggedIn || loginTimeString == null) {
+        return false;
+      }
+
+      final loginTime = DateTime.parse(loginTimeString);
+      final now = DateTime.now();
+
+      // Optional: Auto-logout after 24 hours
+      if (now.difference(loginTime).inHours >= 24) {
+        await logout();
+        return false;
+      }
+
+      if (kDebugMode) {
+        final userType = prefs.getString(_userTypeKey);
+        print('✅ User is logged in as $userType since $loginTime');
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error checking login status: $e');
+      }
       return false;
     }
-
-    final now = DateTime.now();
-
-    // Optional: Auto-logout after 24 hours
-    if (now.difference(_loginTime!).inHours >= 24) {
-      await logout();
-      return false;
-    }
-
-    if (kDebugMode) {
-      print('✅ User is logged in as $_userType since $_loginTime');
-    }
-
-    return true;
   }
 
   // Get user type
   static Future<String?> getUserType() async {
-    return _userType;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_userTypeKey);
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error getting user type: $e');
+      }
+      return null;
+    }
   }
 
   // Logout - clear all stored data
   static Future<void> logout() async {
-    _isLoggedIn = false;
-    _loginTime = null;
-    _userType = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_isLoggedInKey);
+      await prefs.remove(_loginTimeKey);
+      await prefs.remove(_userTypeKey);
 
-    if (kDebugMode) {
-      print('🚪 User logged out - session cleared');
+      if (kDebugMode) {
+        print('🚪 User logged out - session cleared');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error during logout: $e');
+      }
     }
   }
 
@@ -116,5 +154,21 @@ class AuthService {
       return '/dashboard';
     }
     return '/';
+  }
+
+  // Additional helper method to get login time
+  static Future<DateTime?> getLoginTime() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final loginTimeString = prefs.getString(_loginTimeKey);
+      if (loginTimeString != null) {
+        return DateTime.parse(loginTimeString);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error getting login time: $e');
+      }
+    }
+    return null;
   }
 }

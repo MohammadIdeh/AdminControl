@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../registrationScreens/main_login_screen.dart';
-import '../../screens/dashboard_screen.dart';
 import '../../services/auth_service.dart';
 import 'font.dart';
 
@@ -12,6 +10,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  bool _isCheckingAuth = true;
+  String _statusMessage = 'Checking authentication...';
+
   @override
   void initState() {
     super.initState();
@@ -19,34 +20,46 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuthStatus() async {
-    // Add a small delay for better UX
-    await Future.delayed(const Duration(seconds: 2));
-
     try {
+      // Add a small delay for better UX
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (!mounted) return;
+
+      setState(() {
+        _statusMessage = 'Verifying login status...';
+      });
+
       final isLoggedIn = await AuthService.isLoggedIn();
+
+      if (!mounted) return;
+
+      // Add another small delay to prevent flicker
+      await Future.delayed(const Duration(milliseconds: 500));
 
       if (mounted) {
         if (isLoggedIn) {
           // User is logged in, navigate to dashboard
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const DashboardScreen()),
-          );
+          Navigator.pushReplacementNamed(context, '/dashboard');
         } else {
           // User is not logged in, navigate to login
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const UnifiedLoginScreen()),
-          );
+          Navigator.pushReplacementNamed(context, '/login');
         }
       }
     } catch (e) {
-      // If there's an error checking auth status, go to login
+      // If there's an error checking auth status, show error and go to login
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const UnifiedLoginScreen()),
-        );
+        setState(() {
+          _statusMessage = 'Authentication check failed';
+          _isCheckingAuth = false;
+        });
+
+        // Wait a moment then navigate to login
+        await Future.delayed(const Duration(seconds: 1));
+
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/login');
+        }
       }
     }
   }
@@ -104,27 +117,67 @@ class _SplashScreenState extends State<SplashScreen> {
 
               const SizedBox(height: 48),
 
-              // Loading Indicator
-              SizedBox(
-                width: 32,
-                height: 32,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.white.withOpacity(0.8),
+              // Loading Indicator or Error State
+              if (_isCheckingAuth) ...[
+                SizedBox(
+                  width: 32,
+                  height: 32,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white.withOpacity(0.8),
+                    ),
                   ),
                 ),
-              ),
+              ] else ...[
+                Icon(
+                  Icons.error_outline,
+                  size: 32,
+                  color: Colors.white.withOpacity(0.8),
+                ),
+              ],
 
               const SizedBox(height: 16),
 
-              // Loading Text
+              // Status Text
               Text(
-                'Checking authentication...',
+                _statusMessage,
                 style: AppFonts.bodySmall.copyWith(
                   color: Colors.white.withOpacity(0.7),
                 ),
+                textAlign: TextAlign.center,
               ),
+
+              // Retry button if there's an error
+              if (!_isCheckingAuth) ...[
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isCheckingAuth = true;
+                      _statusMessage = 'Checking authentication...';
+                    });
+                    _checkAuthStatus();
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white.withOpacity(0.2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    'Retry',
+                    style: AppFonts.bodyMedium.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

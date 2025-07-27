@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import '../widgets/generalWidgets/font.dart';
 import '../widgets/generalWidgets/nav_bar.dart';
@@ -177,7 +179,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               width: cardWidth,
             ),
             _buildStatsCard(
-              title: 'QR Codes Generated',
+              title: 'lorem upsom',
               value: '89',
               percentage: '+15%',
               isPositive: true,
@@ -188,9 +190,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       },
     );
-  }
+   }
 
-  Widget _buildStatsCard({
+   Widget _buildStatsCard({
     required String title,
     required String value,
     required String percentage,
@@ -465,6 +467,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: color.withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),

@@ -74,6 +74,7 @@ class _myNavigationBarState extends State<myNavigationBar> {
   void _closeMenu() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    // FIX: Add mounted check before calling setState
     if (mounted) {
       setState(() {
         _isMenuOpen = false;
@@ -191,33 +192,11 @@ class _myNavigationBarState extends State<myNavigationBar> {
               ),
             ],
           ),
-
           // Middle: Navigation Items
           Row(children: _buildNavItems()),
-
           // Right side: Profile
           Row(
             children: [
-              // Notifications
-              InkWell(
-                onTap: () {
-                  // Handle notifications
-                },
-                child: Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 36, 50, 69),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.notifications,
-                    color: Color.fromARGB(255, 105, 123, 123),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 14),
-
               // Profile + Arrow
               InkWell(
                 onTap: _toggleProfileMenu,
@@ -269,17 +248,17 @@ class _myNavigationBarState extends State<myNavigationBar> {
     final List<String> navItems = [
       'Dashboard',
       'Users',
-      'Security',
-      'QR Codes',
-      'Settings',
+      'M3lms',
+      'Orders',
+      'Tracking',
     ];
 
     final List<IconData> navIcons = [
       Icons.dashboard,
       Icons.people,
-      Icons.security,
-      Icons.qr_code,
-      Icons.settings,
+      Icons.personal_injury_outlined,
+      Icons.bookmark_added_outlined,
+      Icons.map_outlined,
     ];
 
     return navItems.asMap().entries.map((entry) {
