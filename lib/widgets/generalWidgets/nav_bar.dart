@@ -250,6 +250,7 @@ class _myNavigationBarState extends State<myNavigationBar> {
       'Users',
       'M3lms',
       'Orders',
+      'Categories',
       'Tracking',
     ];
 
@@ -258,6 +259,7 @@ class _myNavigationBarState extends State<myNavigationBar> {
       Icons.people,
       Icons.personal_injury_outlined,
       Icons.bookmark_added_outlined,
+      Icons.category,
       Icons.map_outlined,
     ];
 
