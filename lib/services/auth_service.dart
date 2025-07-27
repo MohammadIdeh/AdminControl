@@ -1,5 +1,5 @@
 class AuthService {
-  static const String _masterKey = "ADMIN2025SECURE123456789";
+  static const String _masterKey = "ADMIN2025SECURE1234567890";
   static final Map<String, int> _failedAttempts = {};
   static final Map<String, DateTime> _lockoutTimes = {};
   static final List<String> _validTOTPCodes = ["123456", "789012", "456789"];

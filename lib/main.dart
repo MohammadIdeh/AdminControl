@@ -20,7 +20,7 @@ class TOTPAdminApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Inter',
       ),
-      home: const MainLoginScreen(),
+      home: const UnifiedLoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
