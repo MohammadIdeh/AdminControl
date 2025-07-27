@@ -1,3 +1,4 @@
+import 'package:admin_totp_panel/screens/user_screen.dart';
 import 'package:flutter/material.dart';
 import 'registrationScreens/main_login_screen.dart';
 import 'screens/dashboard_screen.dart';
@@ -26,6 +27,7 @@ class TOTPAdminApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const UnifiedLoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
+        '/users': (context) => const UserScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

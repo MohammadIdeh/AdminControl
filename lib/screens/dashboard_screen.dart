@@ -36,6 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case 0:
         break;
       case 1:
+        Navigator.pushNamed(context, '/users');
         break;
       case 2:
         break;
