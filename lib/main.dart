@@ -1,3 +1,4 @@
+// lib/main.dart - Updated with slower fade transitions
 import 'package:admin_totp_panel/screens/user_screen.dart';
 import 'package:flutter/material.dart';
 import 'registrationScreens/main_login_screen.dart';
@@ -21,15 +22,78 @@ class TOTPAdminApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
         useMaterial3: true,
+        // Add this to make all page transitions fade
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: SlowFadePageTransitionsBuilder(),
+            TargetPlatform.iOS: SlowFadePageTransitionsBuilder(),
+            TargetPlatform.windows: SlowFadePageTransitionsBuilder(),
+            TargetPlatform.macOS: SlowFadePageTransitionsBuilder(),
+            TargetPlatform.linux: SlowFadePageTransitionsBuilder(),
+          },
+        ),
       ),
       initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const UnifiedLoginScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/users': (context) => const UserScreen(),
+      onGenerateRoute: (settings) {
+        Widget page;
+        switch (settings.name) {
+          case '/':
+            page = const SplashScreen();
+            break;
+          case '/login':
+            page = const UnifiedLoginScreen();
+            break;
+          case '/dashboard':
+            page = const DashboardScreen();
+            break;
+          case '/users':
+            page = const UserScreen();
+            break;
+          default:
+            page = const SplashScreen();
+        }
+
+        return PageRouteBuilder(
+          settings: settings,
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionDuration: const Duration(
+            milliseconds: 700,
+          ), // Longer duration
+          reverseTransitionDuration: const Duration(milliseconds: 700),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeInOut, // Smoother curve
+              ),
+              child: child,
+            );
+          },
+        );
       },
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+// Custom slow fade transition builder
+class SlowFadePageTransitionsBuilder extends PageTransitionsBuilder {
+  const SlowFadePageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T extends Object?>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return FadeTransition(
+      opacity: CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeInOut, // Smoother, more noticeable curve
+      ),
+      child: child,
     );
   }
 }
