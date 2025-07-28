@@ -62,6 +62,7 @@ class AuthService {
     return _failedAttempts[identifier] ?? 0;
   }
 
+  // Save_Save_Save_Save
   // Save login state to persistent storage
   static Future<void> _saveLoginState(String userType) async {
     try {
@@ -166,7 +167,7 @@ class AuthService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error getting login time: $e');
+        print('❌ Error getting login time: $e ❌');
       }
     }
     return null;
