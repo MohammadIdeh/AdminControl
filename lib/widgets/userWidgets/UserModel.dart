@@ -12,6 +12,7 @@ class UserModel {
   int activeOrders;
   final String avatar;
   double rating;
+  double walletBalance; // New field for wallet balance
 
   UserModel({
     required this.id,
@@ -27,5 +28,6 @@ class UserModel {
     required this.activeOrders,
     required this.avatar,
     required this.rating,
+    this.walletBalance = 0.0, // Default wallet balance
   });
 }

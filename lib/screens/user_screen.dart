@@ -16,7 +16,7 @@ class _UserScreenState extends State<UserScreen> {
   bool _isLoading = false;
   int _currentIndex = 1; // Since this is the Users tab
 
-  // Mock user data
+  // Mock user data with wallet balances
   final List<UserModel> _allUsers = [
     UserModel(
       id: 'USR001',
@@ -32,6 +32,7 @@ class _UserScreenState extends State<UserScreen> {
       activeOrders: 2,
       avatar: 'JS',
       rating: 4.8,
+      walletBalance: 125.50,
     ),
     UserModel(
       id: 'USR002',
@@ -47,6 +48,7 @@ class _UserScreenState extends State<UserScreen> {
       activeOrders: 0,
       avatar: 'SW',
       rating: 4.6,
+      walletBalance: 89.25,
     ),
     UserModel(
       id: 'USR003',
@@ -62,6 +64,7 @@ class _UserScreenState extends State<UserScreen> {
       activeOrders: 1,
       avatar: 'RD',
       rating: 4.9,
+      walletBalance: 234.75,
     ),
     UserModel(
       id: 'USR004',
@@ -77,6 +80,7 @@ class _UserScreenState extends State<UserScreen> {
       activeOrders: 0,
       avatar: 'LA',
       rating: 3.2,
+      walletBalance: 0.00,
     ),
     UserModel(
       id: 'USR005',
@@ -92,6 +96,7 @@ class _UserScreenState extends State<UserScreen> {
       activeOrders: 3,
       avatar: 'MT',
       rating: 4.7,
+      walletBalance: 67.80,
     ),
   ];
 
