@@ -141,128 +141,6 @@ class _M3lmScreenState extends State<M3lmScreen> {
       bankAccount: '****3456',
       taxId: 'TX789123456',
     ),
-    M3lmModel(
-      id: 'M3L005',
-      name: 'Alex Rodriguez',
-      email: 'alex.rodriguez@email.com',
-      phone: '+1-555-0205',
-      location: 'Suburbs North, NY',
-      isActive: false, // Inactive
-      isBlocked: false,
-      isVerified: true,
-      isAvailable: false,
-      joinDate: DateTime(2023, 6, 20),
-      lastActive: DateTime.now().subtract(const Duration(days: 5)),
-      totalJobs: 67,
-      activeJobs: 0,
-      completedJobs: 63,
-      avatar: 'AR',
-      rating: 4.4,
-      walletBalance: 245.80,
-      monthlyEarnings: 0.00,
-      totalEarnings: 8920.40,
-      services: ['Painting', 'Interior Design'],
-      experienceLevel: 'Intermediate',
-      verificationStatus: 'Verified',
-      serviceAreas: ['Suburbs North', 'Suburbs South'],
-      completionRate: 94.0,
-      reviewsCount: 89,
-      certifications: ['Professional Painter'],
-      bankAccount: '****7890',
-      taxId: 'TX321654987',
-      lastPayment: DateTime.now().subtract(const Duration(days: 30)),
-    ),
-    M3lmModel(
-      id: 'M3L006',
-      name: 'Jessica Chen',
-      email: 'jessica.chen@email.com',
-      phone: '+1-555-0206',
-      location: 'Downtown, NY',
-      isActive: true,
-      isBlocked: true, // Blocked M3LM
-      isVerified: true,
-      isAvailable: false,
-      joinDate: DateTime(2023, 4, 3),
-      lastActive: DateTime.now().subtract(const Duration(days: 10)),
-      totalJobs: 89,
-      activeJobs: 0,
-      completedJobs: 76,
-      avatar: 'JC',
-      rating: 3.8,
-      walletBalance: 0.00,
-      monthlyEarnings: 0.00,
-      totalEarnings: 7650.30,
-      services: ['Gardening', 'Landscaping'],
-      experienceLevel: 'Intermediate',
-      verificationStatus: 'Verified',
-      serviceAreas: ['Downtown'],
-      completionRate: 85.4,
-      reviewsCount: 98,
-      certifications: ['Landscape Designer'],
-      bankAccount: '****2468',
-      taxId: 'TX654987321',
-    ),
-    M3lmModel(
-      id: 'M3L007',
-      name: 'Robert Taylor',
-      email: 'robert.taylor@email.com',
-      phone: '+1-555-0207',
-      location: 'Industrial District, NY',
-      isActive: true,
-      isBlocked: false,
-      isVerified: false, // Recently joined, pending
-      isAvailable: true,
-      joinDate: DateTime(2024, 1, 28),
-      lastActive: DateTime.now().subtract(const Duration(minutes: 30)),
-      totalJobs: 8,
-      activeJobs: 1,
-      completedJobs: 7,
-      avatar: 'RT',
-      rating: 4.3,
-      walletBalance: 145.50,
-      monthlyEarnings: 890.25,
-      totalEarnings: 890.25,
-      services: ['Handyman', 'General Repairs'],
-      experienceLevel: 'Beginner',
-      verificationStatus: 'Pending',
-      serviceAreas: ['Industrial District'],
-      completionRate: 87.5,
-      reviewsCount: 12,
-      certifications: [],
-      bankAccount: '****1357',
-      taxId: 'TX147258369',
-    ),
-    M3lmModel(
-      id: 'M3L008',
-      name: 'Anna Martinez',
-      email: 'anna.martinez@email.com',
-      phone: '+1-555-0208',
-      location: 'Suburbs South, NY',
-      isActive: true,
-      isBlocked: false,
-      isVerified: true,
-      isAvailable: true,
-      joinDate: DateTime(2023, 5, 18),
-      lastActive: DateTime.now().subtract(const Duration(minutes: 45)),
-      totalJobs: 156,
-      activeJobs: 4,
-      completedJobs: 149,
-      avatar: 'AM',
-      rating: 4.9,
-      walletBalance: 3850.90,
-      monthlyEarnings: 4200.00,
-      totalEarnings: 28750.80,
-      services: ['Appliance Repair', 'Electronics'],
-      experienceLevel: 'Expert',
-      verificationStatus: 'Verified',
-      serviceAreas: ['Suburbs South', 'East Side'],
-      completionRate: 95.5,
-      reviewsCount: 298,
-      certifications: ['Electronics Specialist', 'Appliance Certified'],
-      bankAccount: '****9753',
-      taxId: 'TX258369147',
-      lastPayment: DateTime.now().subtract(const Duration(days: 5)),
-    ),
   ];
 
   void _onNavItemTap(int index) {
@@ -328,119 +206,108 @@ class _M3lmScreenState extends State<M3lmScreen> {
       body: RefreshIndicator(
         onRefresh: _refreshM3lms,
         color: const Color(0xFF3B82F6),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Section
-                _buildHeader(),
-                const SizedBox(height: 32),
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(24.0),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  // Header Section
+                  _buildHeader(),
+                  const SizedBox(height: 32),
 
-                // Statistics Cards Widget
-                M3lmStatsCardsWidget(allM3lms: _allM3lms),
-                const SizedBox(height: 32),
+                  // Statistics Cards Widget - Fixed height
+                  SizedBox(
+                    height: 180, // Fixed height to prevent layout issues
+                    child: M3lmStatsCardsWidget(allM3lms: _allM3lms),
+                  ),
+                  const SizedBox(height: 32),
 
-                // M3LM List Widget
-                M3lmListWidget(allM3lms: _allM3lms, onRefresh: _refreshM3lms),
-              ],
+                  // M3LM List Widget - No height constraints needed
+                  M3lmListWidget(allM3lms: _allM3lms, onRefresh: _refreshM3lms),
+                ]),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF10B981), Color(0xFF059669)],
+    return Container(
+      // Removed any flex properties that could cause issues
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, // Changed from center
+        children: [
+          // Left side - Icon and Title
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF10B981), Color(0xFF059669)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF10B981).withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF10B981).withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                    child: const Icon(
+                      Icons.engineering,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'M3LM Management',
+                        style: AppFonts.heading1.copyWith(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Manage service providers and their performance',
+                        style: AppFonts.bodyLarge.copyWith(
+                          color: Colors.grey[400],
+                        ),
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.engineering,
-                    color: Colors.white,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'M3LM Management',
-                      style: AppFonts.heading1.copyWith(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Manage service providers and their performance',
-                      style: AppFonts.bodyLarge.copyWith(
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        const Spacer(),
-
-        // Action Buttons Row
-        Row(
-          children: [
-            // Add New M3LM Button
-            Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF10B981), Color(0xFF059669)],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF10B981).withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
                 ],
               ),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+            ],
+          ),
+          const Spacer(),
+
+          // Right side - Action Buttons
+          Wrap(
+            // Using Wrap instead of Row to handle overflow better
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              // Add New M3LM Button
+              _buildActionButton(
+                'Add New M3LM',
+                Icons.person_add,
+                const LinearGradient(
+                  colors: [Color(0xFF10B981), Color(0xFF059669)],
                 ),
-                onPressed: () {
-                  // TODO: Implement add new M3LM functionality
+                () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text('Add New M3LM feature coming soon!'),
@@ -453,49 +320,16 @@ class _M3lmScreenState extends State<M3lmScreen> {
                     ),
                   );
                 },
-                icon: const Icon(
-                  Icons.person_add,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                label: Text(
-                  'Add New M3LM',
-                  style: AppFonts.button.copyWith(color: Colors.white),
-                ),
               ),
-            ),
 
-            const SizedBox(width: 16),
-
-            // Export Data Button
-            Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
+              // Export Data Button
+              _buildActionButton(
+                'Export Data',
+                Icons.download,
+                const LinearGradient(
                   colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
                 ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF8B5CF6).withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  // TODO: Implement export functionality
+                () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text('Exporting M3LMs data...'),
@@ -508,65 +342,66 @@ class _M3lmScreenState extends State<M3lmScreen> {
                     ),
                   );
                 },
-                icon: const Icon(Icons.download, color: Colors.white, size: 18),
-                label: Text(
-                  'Export Data',
-                  style: AppFonts.button.copyWith(color: Colors.white),
-                ),
               ),
-            ),
 
-            const SizedBox(width: 16),
-
-            // Refresh Button
-            Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
+              // Refresh Button
+              _buildActionButton(
+                _isLoading ? 'Refreshing...' : 'Refresh Data',
+                _isLoading ? null : Icons.refresh_rounded,
+                const LinearGradient(
                   colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
                 ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF3B82F6).withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                _isLoading ? null : _refreshM3lms,
+                isLoading: _isLoading,
               ),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: _isLoading ? null : _refreshM3lms,
-                icon: _isLoading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      )
-                    : const Icon(Icons.refresh_rounded, color: Colors.white),
-                label: Text(
-                  _isLoading ? 'Refreshing...' : 'Refresh Data',
-                  style: AppFonts.button.copyWith(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    String text,
+    IconData? icon,
+    Gradient gradient,
+    VoidCallback? onPressed, {
+    bool isLoading = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: gradient.colors.first.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-      ],
+        onPressed: onPressed,
+        icon: isLoading
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : Icon(icon, color: Colors.white, size: 18),
+        label: Text(text, style: AppFonts.button.copyWith(color: Colors.white)),
+      ),
     );
   }
 }

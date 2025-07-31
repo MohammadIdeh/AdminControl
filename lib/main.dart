@@ -1,4 +1,4 @@
-// lib/main.dart - Updated with slower fade transitions
+// lib/main.dart - Fixed with proper break statements
 import 'package:admin_totp_panel/screens/m3lm_screen.dart';
 import 'package:admin_totp_panel/screens/user_screen.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +46,7 @@ class TOTPAdminApp extends StatelessWidget {
             break;
           case '/dashboard':
             page = const DashboardScreen();
+            break; // ← THIS WAS MISSING! Critical fix
           case '/m3lms':
             page = const M3lmScreen();
             break;
@@ -54,6 +55,7 @@ class TOTPAdminApp extends StatelessWidget {
             break;
           default:
             page = const SplashScreen();
+            break; // Added for consistency
         }
 
         return PageRouteBuilder(

@@ -33,6 +33,12 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
   String _sortBy = 'name';
   bool _sortAscending = true;
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   List<M3lmModel> get _filteredM3lms {
     var m3lms = widget.allM3lms.where((m3lm) {
       // Apply search filter
@@ -218,6 +224,8 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      // Removed any flex properties - let the content determine its size
+      mainAxisSize: MainAxisSize.min,
       children: [
         // Search and Filter Section
         _buildSearchAndFilter(),
@@ -231,6 +239,8 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
 
   Widget _buildSearchAndFilter() {
     return Container(
+      // Fixed height to prevent layout issues
+      height: 120,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -246,6 +256,7 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'Search & Filter M3LMs',
@@ -254,146 +265,169 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              // Search Bar
-              Expanded(
-                flex: 3,
-                child: TextField(
-                  controller: _searchController,
-                  style: AppFonts.bodyMedium.copyWith(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Search by name, ID, email, or service...',
-                    hintStyle: AppFonts.bodyMedium.copyWith(
-                      color: Colors.grey[400],
+          // Controls Row
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 800) {
+                // Stack vertically on smaller screens
+                return Column(
+                  children: [
+                    _buildSearchField(),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(child: _buildFilterDropdown()),
+                        const SizedBox(width: 16),
+                        _buildSortControls(),
+                      ],
                     ),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 29, 41, 57),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF3B82F6),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                  },
+                  ],
+                );
+              } else {
+                // Single row on larger screens
+                return Row(
+                  children: [
+                    Expanded(flex: 3, child: _buildSearchField()),
+                    const SizedBox(width: 16),
+                    _buildFilterDropdown(),
+                    const SizedBox(width: 16),
+                    _buildSortControls(),
+                  ],
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return SizedBox(
+      height: 40,
+      child: TextField(
+        controller: _searchController,
+        style: AppFonts.bodyMedium.copyWith(color: Colors.white),
+        decoration: InputDecoration(
+          hintText: 'Search by name, ID, email, or service...',
+          hintStyle: AppFonts.bodyMedium.copyWith(color: Colors.grey[400]),
+          prefixIcon: Icon(Icons.search, color: Colors.grey[400], size: 20),
+          filled: true,
+          fillColor: const Color.fromARGB(255, 29, 41, 57),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
+          ),
+        ),
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildFilterDropdown() {
+    return Container(
+      height: 40,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 29, 41, 57),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedFilter,
+          items: _filters.map((filter) {
+            return DropdownMenuItem(
+              value: filter,
+              child: Text(
+                filter,
+                style: AppFonts.bodyMedium.copyWith(
+                  color: Colors.white,
+                  fontSize: 14,
                 ),
               ),
-              const SizedBox(width: 16),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedFilter = value!;
+            });
+          },
+          dropdownColor: const Color.fromARGB(255, 29, 41, 57),
+          iconEnabledColor: Colors.white,
+        ),
+      ),
+    );
+  }
 
-              // Filter Dropdown
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 29, 41, 57),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _selectedFilter,
-                    items: _filters.map((filter) {
+  Widget _buildSortControls() {
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 29, 41, 57),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _sortBy,
+                items:
+                    [
+                      {'value': 'name', 'label': 'Name'},
+                      {'value': 'rating', 'label': 'Rating'},
+                      {'value': 'totalJobs', 'label': 'Jobs'},
+                      {'value': 'earnings', 'label': 'Earnings'},
+                      {'value': 'joinDate', 'label': 'Join Date'},
+                    ].map((sort) {
                       return DropdownMenuItem(
-                        value: filter,
+                        value: sort['value'],
                         child: Text(
-                          filter,
+                          sort['label']!,
                           style: AppFonts.bodyMedium.copyWith(
                             color: Colors.white,
+                            fontSize: 14,
                           ),
                         ),
                       );
                     }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedFilter = value!;
-                      });
-                    },
-                    dropdownColor: const Color.fromARGB(255, 29, 41, 57),
-                    iconEnabledColor: Colors.white,
-                  ),
-                ),
+                onChanged: (value) {
+                  setState(() {
+                    _sortBy = value!;
+                  });
+                },
+                dropdownColor: const Color.fromARGB(255, 29, 41, 57),
+                iconEnabledColor: Colors.white,
               ),
-              const SizedBox(width: 16),
-
-              // Sort Dropdown
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 29, 41, 57),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _sortBy,
-                        items:
-                            [
-                              {'value': 'name', 'label': 'Name'},
-                              {'value': 'rating', 'label': 'Rating'},
-                              {'value': 'totalJobs', 'label': 'Jobs'},
-                              {'value': 'earnings', 'label': 'Earnings'},
-                              {'value': 'joinDate', 'label': 'Join Date'},
-                            ].map((sort) {
-                              return DropdownMenuItem(
-                                value: sort['value'],
-                                child: Text(
-                                  sort['label']!,
-                                  style: AppFonts.bodyMedium.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _sortBy = value!;
-                          });
-                        },
-                        dropdownColor: const Color.fromARGB(255, 29, 41, 57),
-                        iconEnabledColor: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _sortAscending = !_sortAscending;
-                        });
-                      },
-                      icon: Icon(
-                        _sortAscending
-                            ? Icons.arrow_upward
-                            : Icons.arrow_downward,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _sortAscending = !_sortAscending;
+              });
+            },
+            icon: Icon(
+              _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
+              color: Colors.white,
+              size: 16,
+            ),
           ),
         ],
       ),
@@ -422,6 +456,7 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min, // Important: Don't expand
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Table Header
@@ -467,16 +502,20 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
             ),
           ),
 
-          // Table Content
+          // Table Content - Using ListView without Expanded
           ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true, // Important: Don't take all available space
+            physics:
+                const NeverScrollableScrollPhysics(), // Parent handles scrolling
             itemCount: _filteredM3lms.length,
             itemBuilder: (context, index) {
               final m3lm = _filteredM3lms[index];
               return _buildM3lmRow(m3lm, index);
             },
           ),
+
+          // Bottom padding
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -550,8 +589,8 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
             ),
             const SizedBox(width: 16),
 
-            // Basic Info
-            Expanded(
+            // Basic Info - Using Flexible instead of Expanded
+            Flexible(
               flex: 3,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -609,13 +648,14 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
                       color: Colors.grey[400],
                       fontSize: 11,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
 
             // Services & Location
-            Expanded(
+            Flexible(
               flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -639,13 +679,14 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
                   Text(
                     m3lm.location,
                     style: AppFonts.bodySmall.copyWith(color: Colors.grey[400]),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
 
             // Performance & Rating
-            Expanded(
+            Flexible(
               flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -695,7 +736,8 @@ class _M3lmListWidgetState extends State<M3lmListWidget> {
             const SizedBox(width: 16),
 
             // Last Active
-            Expanded(
+            SizedBox(
+              width: 80,
               child: Text(
                 _formatLastActive(m3lm.lastActive),
                 style: AppFonts.bodySmall.copyWith(color: Colors.grey[400]),

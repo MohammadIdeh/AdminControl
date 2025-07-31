@@ -27,52 +27,120 @@ class M3lmStatsCardsWidget extends StatelessWidget {
         ? allM3lms.fold(0.0, (sum, m3lm) => sum + m3lm.rating) / allM3lms.length
         : 0.0;
 
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            'Total M3LMs',
-            totalM3lms.toString(),
-            '+15%',
-            true,
-            Icons.engineering_outlined,
-            const Color(0xFF10B981),
-          ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: _buildStatCard(
-            'Available Now',
-            availableM3lms.toString(),
-            '+5%',
-            true,
-            Icons.verified_user_outlined,
-            const Color(0xFF3B82F6),
-          ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: _buildStatCard(
-            'Pending Review',
-            pendingVerification.toString(),
-            '-8%',
-            false,
-            Icons.pending_actions_outlined,
-            const Color(0xFFF59E0B),
-          ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: _buildStatCard(
-            'Avg Rating',
-            averageRating.toStringAsFixed(1),
-            '+0.2',
-            true,
-            Icons.star_outline,
-            const Color(0xFF8B5CF6),
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Responsive layout based on screen width
+        if (constraints.maxWidth < 800) {
+          // Stack cards vertically on smaller screens
+          return Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatCard(
+                      'Total M3LMs',
+                      totalM3lms.toString(),
+                      '+15%',
+                      true,
+                      Icons.engineering_outlined,
+                      const Color(0xFF10B981),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildStatCard(
+                      'Available Now',
+                      availableM3lms.toString(),
+                      '+5%',
+                      true,
+                      Icons.verified_user_outlined,
+                      const Color(0xFF3B82F6),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatCard(
+                      'Pending Review',
+                      pendingVerification.toString(),
+                      '-8%',
+                      false,
+                      Icons.pending_actions_outlined,
+                      const Color(0xFFF59E0B),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildStatCard(
+                      'Avg Rating',
+                      averageRating.toStringAsFixed(1),
+                      '+0.2',
+                      true,
+                      Icons.star_outline,
+                      const Color(0xFF8B5CF6),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        } else {
+          // Single row on larger screens
+          return IntrinsicHeight(
+            // Ensures all cards have the same height
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    'Total M3LMs',
+                    totalM3lms.toString(),
+                    '+15%',
+                    true,
+                    Icons.engineering_outlined,
+                    const Color(0xFF10B981),
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: _buildStatCard(
+                    'Available Now',
+                    availableM3lms.toString(),
+                    '+5%',
+                    true,
+                    Icons.verified_user_outlined,
+                    const Color(0xFF3B82F6),
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: _buildStatCard(
+                    'Pending Review',
+                    pendingVerification.toString(),
+                    '-8%',
+                    false,
+                    Icons.pending_actions_outlined,
+                    const Color(0xFFF59E0B),
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: _buildStatCard(
+                    'Avg Rating',
+                    averageRating.toStringAsFixed(1),
+                    '+0.2',
+                    true,
+                    Icons.star_outline,
+                    const Color(0xFF8B5CF6),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -85,7 +153,9 @@ class M3lmStatsCardsWidget extends StatelessWidget {
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      // Fixed height to prevent flex issues
+      height: 140,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -107,12 +177,15 @@ class M3lmStatsCardsWidget extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween, // Distribute space evenly
         children: [
+          // Top row - Icon and percentage
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
@@ -124,10 +197,10 @@ class M3lmStatsCardsWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(icon, color: color, size: 24),
+                child: Icon(icon, color: color, size: 20),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: isPositive
                       ? const Color(0xFF10B981).withOpacity(0.2)
@@ -147,9 +220,9 @@ class M3lmStatsCardsWidget extends StatelessWidget {
                       color: isPositive
                           ? const Color(0xFF10B981)
                           : const Color(0xFFEF4444),
-                      size: 12,
+                      size: 10,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 2),
                     Text(
                       percentage,
                       style: AppFonts.bodySmall.copyWith(
@@ -157,6 +230,7 @@ class M3lmStatsCardsWidget extends StatelessWidget {
                             ? const Color(0xFF10B981)
                             : const Color(0xFFEF4444),
                         fontWeight: FontWeight.w600,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -164,23 +238,29 @@ class M3lmStatsCardsWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(width: 24),
-          const Spacer(),
-          Text(
-            value,
-            style: AppFonts.heading1.copyWith(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: AppFonts.bodyMedium.copyWith(
-              color: Colors.grey[400],
-              fontWeight: FontWeight.w500,
-            ),
+
+          // Bottom section - Value and title
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: AppFonts.heading1.copyWith(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                title,
+                style: AppFonts.bodySmall.copyWith(
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.w500,
+                  fontSize: 11,
+                ),
+              ),
+            ],
           ),
         ],
       ),
