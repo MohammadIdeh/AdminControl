@@ -112,6 +112,7 @@ class _UserScreenState extends State<UserScreen> {
       case 1:
         break; // Current screen
       case 2:
+        Navigator.pushNamed(context, '/m3lms');
         break;
       case 3:
         break;

@@ -1,4 +1,5 @@
 // lib/main.dart - Updated with slower fade transitions
+import 'package:admin_totp_panel/screens/m3lm_screen.dart';
 import 'package:admin_totp_panel/screens/user_screen.dart';
 import 'package:flutter/material.dart';
 import 'registrationScreens/main_login_screen.dart';
@@ -45,6 +46,8 @@ class TOTPAdminApp extends StatelessWidget {
             break;
           case '/dashboard':
             page = const DashboardScreen();
+          case '/m3lms':
+            page = const M3lmScreen();
             break;
           case '/users':
             page = const UserScreen();
